@@ -3,6 +3,7 @@
 import os
 import json
 import subprocess
+import math
 from operator import mul
 from functools import reduce
 
@@ -40,6 +41,13 @@ def seconds_to_human(seconds):
     return ":".join(time_list)
 
 
+def size_to_human(size):
+    units = ["B", "kB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"]
+    exp = int(math.log10(size))
+    res = exp // 3
+    return "{n:.2f}{u}".format(n=(size / math.pow(10, 3*res)), u=units[res])
+
+
 class CommandCaller(object):
 
     def __init__(self, command, **flags):
@@ -66,6 +74,36 @@ class VideoInfo(object):
         self.like_count = self.info_dict.get("like_count", 0)
         self.dislike_count = self.info_dict.get("dislike_count", 0)
         self.view_count = self.info_dict.get("view_count", 0)
+        self.formats = list(self._get_formats())
+
+    def _get_formats(self):
+        if "entries" in self.info_dict:  # FIXME: No playlist support
+            formats = self.info_dict["entries"][0].get(
+                "formats", [self.info_dict])
+        else:
+            formats = self.info_dict.get("formats", [self.info_dict])
+        # reverse: best formats are at the end of the list, but we want as firsts
+        for format_ in filter(lambda f: f.get('preference') is None or f['preference'] >= -1000, reversed(formats)):
+            desc = []
+            desc.append(format_["ext"].upper())
+            if "unknown" in format_["format"]:
+                desc.append(format_["format"])
+            else:
+                if format_.get("height", None):
+                    desc.append("{0}p".format(format_["height"]))
+                if format_["vcodec"] and format_["acodec"] == "none":
+                    desc.append("{0}fps".format(format_["fps"]))
+                    desc.append("(solo video)")
+                elif format_["acodec"] and format_["vcodec"] == "none":
+                    desc.append("{0}k".format(format_["abr"]))
+                    desc.append("(solo audio)")
+                if format_.get("filesize"):
+                    desc.append(size_to_human(int(format_.get("filesize"))))
+                print(desc)
+
+            format_["format_desc"] = " ".join(desc)
+
+            yield format_
 
     @property
     def duration(self):
@@ -73,15 +111,6 @@ class VideoInfo(object):
         if isinstance(seconds, int):
             return seconds
         return 0
-
-    @property
-    def formats(self):
-        if "entries" in self.info_dict:  # FIXME: No playlist support
-            formats = self.info_dict["entries"][0].get(
-                "formats", [self.info_dict])
-        else:
-            formats = self.info_dict.get("formats", [self.info_dict])
-        return filter(lambda f: f.get('preference') is None or f['preference'] >= -1000, formats)
 
 
 if __name__ == "__main__":
