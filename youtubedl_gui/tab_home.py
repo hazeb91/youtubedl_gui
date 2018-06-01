@@ -273,13 +273,12 @@ class Home(Gtk.Bin):
             self.info_frame.description_value.set_text(
                 self.video_info_obj.description)
 
-            formats_list = list(self.video_info_obj.formats)
-            formats_list.reverse()  # best formats are at the end of list, but we want as firsts
             # self.quality_combo.format_store.append(["Auto"])
-            for format in formats_list:
-                self.quality_combo.format_store.append([format["format"]])
-            print(*formats_list[0].items(), sep="\n")
+            for i, format in enumerate(self.video_info_obj.formats):
+                self.quality_combo.format_store.append([i, format["format_desc"]])
             self.quality_combo.format_combo.set_active(0)
+
+            print(self.video_info_obj.formats[0].items(), sep="\n")
 
             self.start_buttons.set_sensitive(True)
         else:

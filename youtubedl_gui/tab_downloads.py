@@ -26,8 +26,7 @@ class ControlButtons(Gtk.Box):
         super(ControlButtons, self).__init__(**kwargs)
 
         self.cancel_button = ImageButton(Gtk.STOCK_CLOSE, Gtk.IconSize.BUTTON)
-        self.restart_button = ImageButton(
-            Gtk.STOCK_REFRESH, Gtk.IconSize.BUTTON)
+        self.restart_button = ImageButton(Gtk.STOCK_REFRESH, Gtk.IconSize.BUTTON)
         self.delete_button = ImageButton(Gtk.STOCK_DELETE, Gtk.IconSize.BUTTON)
 
         self.pack_start(self.cancel_button, False, False, 0)

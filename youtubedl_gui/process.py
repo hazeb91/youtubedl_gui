@@ -39,14 +39,7 @@ class DownloadVideo(object):
         self.progress = None
         self.is_pause = False
         self.video_info_obj = video_info_obj
-
-        if format_chosen == "Auto":
-            format_id = self.video_info_obj.info_dict.get("format_id", "best")
-        else:
-            for f in self.video_info_obj.formats:
-                if format_chosen == f["format"]:
-                    self.format = f
-                    break
+        self.format = video_info_obj.formats[format_chosen]
 
         basename = self.video_info_obj.info_dict["_filename"].rpartition(".")[0]
         self.video_info_obj.filename = ".".join([basename, self.format["ext"]])
