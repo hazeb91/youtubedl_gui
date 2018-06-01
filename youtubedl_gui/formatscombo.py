@@ -36,7 +36,7 @@ class BaseFormatCombo(Gtk.Box):
 
 class QualityCombo(BaseFormatCombo):
 
-    format_store = Gtk.ListStore(str)
+    format_store = Gtk.ListStore(int, str)
 
     def __init__(self):
         super(QualityCombo, self).__init__(
@@ -46,7 +46,7 @@ class QualityCombo(BaseFormatCombo):
 
         renderer_text = Gtk.CellRendererText()
         self.format_combo.pack_start(renderer_text, True)
-        self.format_combo.add_attribute(renderer_text, "text", 0)
+        self.format_combo.add_attribute(renderer_text, "text", 1)
 
 
 class RecodeVideoFormatCombo(BaseFormatCombo):
