@@ -1,5 +1,5 @@
 =============
-YoutubeDL GUI
+YoutubeDL GUI [DEPRECATED]
 =============
 
 
